@@ -105,30 +105,31 @@ class ApiCommandHelper {
    * @param string $repoRoot
    */
   public function __construct(
-    string $cloudConfigFilepath,
     LocalMachineHelper $localMachineHelper,
-    JsonFileStore $datastoreCloud,
-    JsonFileStore $datastoreAcli,
     TelemetryHelper $telemetryHelper,
     Amplitude $amplitude,
-    string $acliConfigFilename,
     string $repoRoot,
     ClientService $cloudApiClientService,
     LogstreamManager $logstreamManager,
     SshHelper $sshHelper
   ) {
-    $this->cloudConfigFilepath = $cloudConfigFilepath;
+    $this->cloudConfigFilepath = $localMachineHelper->getCloudConfigFilePath();
     $this->localMachineHelper = $localMachineHelper;
-    $this->datastoreCloud = $datastoreCloud;
-    $this->acliDatastore = $datastoreAcli;
+    $this->datastoreCloud = new JsonFileStore(
+      $localMachineHelper->getCloudConfigFilePath(),
+      JsonFileStore::NO_SERIALIZE_STRINGS);
+    $this->acliDatastore = new JsonFileStore(
+      $localMachineHelper->getAcliConfigFileName()
+    );
     $this->telemetryHelper = $telemetryHelper;
     $this->amplitude = $amplitude;
-    $this->acliConfigFilename = $acliConfigFilename;
+    $this->acliConfigFilename = $localMachineHelper->getAcliConfigFileName();
     $this->repoRoot = $repoRoot;
     $this->cloudApiClientService = $cloudApiClientService;
     $this->logstreamManager = $logstreamManager;
     $this->sshHelper = $sshHelper;
     $this->sshDir = $localMachineHelper->getSshDir();
+  
   }
 
   /**
@@ -477,9 +478,8 @@ class ApiCommandHelper {
         }
 
         $command_name = 'api:' . $schema['x-cli-name'];
-        $command = new ApiCommandBase($this->cloudConfigFilepath, $this->localMachineHelper, $this->datastoreCloud,
-          $this->acliDatastore, $this->telemetryHelper, $this->amplitude, $this->acliConfigFilename, $this->repoRoot,
-          $this->cloudApiClientService, $this->logstreamManager, $this->sshHelper);
+        $command = new ApiCommandBase($this->localMachineHelper, $this->telemetryHelper, 
+        $this->amplitude, $this->repoRoot, $this->cloudApiClientService, $this->logstreamManager, $this->sshHelper);
         $command->setName($command_name);
         $command->setDescription($schema['summary']);
         $command->setMethod($method);

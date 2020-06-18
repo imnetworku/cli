@@ -256,6 +256,14 @@ class LocalMachineHelper {
     return $this->getHomeDir() . '/.ssh';
   }
 
+  public function getAcliConfigFileName(): string {
+    return $this->getHomeDir() . '/.acquia/acquia-cli.json';
+  }
+
+  public function getCloudConfigFilePath(): string {
+    return $this->getHomeDir() . '/.acquia/cloud_api.conf';
+  }
+  
   /**
    * Starts a background browser/tab for the current site or a specified URL.
    *

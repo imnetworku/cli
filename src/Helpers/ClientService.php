@@ -5,6 +5,8 @@ namespace Acquia\Cli\Helpers;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use Webmozart\KeyValueStore\JsonFileStore;
+use Acquia\Cli\Helpers\LocalMachineHelper;
+
 
 class ClientService {
 
@@ -12,8 +14,11 @@ class ClientService {
 
   private $cloud_api_conf;
 
-  public function __construct(JsonFileStore $datastoreCloud) {
-    $this->cloud_api_conf = $datastoreCloud;
+  public function __construct(LocalMachineHelper $localMachineHelper) {
+    
+    $this->cloud_api_conf = new JsonFileStore(
+      $localMachineHelper->getCloudConfigFilePath(),
+      JsonFileStore::NO_SERIALIZE_STRINGS);;
   }
 
   /**

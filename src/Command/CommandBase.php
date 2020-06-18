@@ -146,25 +146,25 @@ abstract class CommandBase extends Command implements LoggerAwareInterface {
    * @param string $repoRoot
    */
   public function __construct(
-    string $cloudConfigFilepath,
     LocalMachineHelper $localMachineHelper,
-    JsonFileStore $datastoreCloud,
-    JsonFileStore $datastoreAcli,
     TelemetryHelper $telemetryHelper,
     Amplitude $amplitude,
-    string $acliConfigFilename,
     string $repoRoot,
     ClientService $cloudApiClientService,
     LogstreamManager $logstreamManager,
     SshHelper $sshHelper
   ) {
-    $this->cloudConfigFilepath = $cloudConfigFilepath;
+    $this->cloudConfigFilepath = $localMachineHelper->getCloudConfigFilePath();
     $this->localMachineHelper = $localMachineHelper;
-    $this->datastoreCloud = $datastoreCloud;
-    $this->acliDatastore = $datastoreAcli;
+    $this->datastoreCloud = new JsonFileStore(
+      $localMachineHelper->getCloudConfigFilePath(),
+      JsonFileStore::NO_SERIALIZE_STRINGS);
+    $this->acliDatastore = new JsonFileStore(
+      $localMachineHelper->getAcliConfigFileName()
+    );
     $this->telemetryHelper = $telemetryHelper;
     $this->amplitude = $amplitude;
-    $this->acliConfigFilename = $acliConfigFilename;
+    $this->acliConfigFilename = $localMachineHelper->getAcliConfigFileName();
     $this->repoRoot = $repoRoot;
     $this->cloudApiClientService = $cloudApiClientService;
     $this->logstreamManager = $logstreamManager;

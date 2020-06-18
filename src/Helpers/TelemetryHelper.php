@@ -12,6 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\KeyValueStore\JsonFileStore;
 use Zumba\Amplitude\Amplitude;
+use Acquia\Cli\Helpers\LocalMachineHelper;
+
 
 class TelemetryHelper {
 
@@ -53,14 +55,18 @@ class TelemetryHelper {
     InputInterface $input,
     OutputInterface $output,
     ClientService $cloud_api,
-    JsonFileStore $datastoreAcli,
-    JsonFileStore $datastoreCloud
+    LocalMachineHelper $localMachineHelper
+
   ) {
     $this->input = $input;
     $this->output = $output;
     $this->cloudApi = $cloud_api;
-    $this->cloudDatastore = $datastoreCloud;
-    $this->acliDatastore = $datastoreAcli;
+    $this->cloudDataStore = new JsonFileStore(
+      $localMachineHelper->getCloudConfigFilePath(),
+      JsonFileStore::NO_SERIALIZE_STRINGS);
+    $this->acliDatastore = new JsonFileStore(
+      $localMachineHelper->getAcliConfigFileName()
+    );
   }
 
   /**

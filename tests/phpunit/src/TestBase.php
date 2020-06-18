@@ -187,7 +187,7 @@ abstract class TestBase extends TestCase {
     $this->localMachineHelper->setHomeDir($this->fixtureDir);
     $this->clientServiceProphecy = $this->prophet->prophesize(ClientService::class);
     $this->clientServiceProphecy->getClient()->willReturn($this->clientProphecy->reveal());
-    $this->telemetryHelper = new TelemetryHelper($this->input, $output, $this->clientServiceProphecy->reveal(), $this->acliDatastore, $this->cloudDatastore);
+    $this->telemetryHelper = new TelemetryHelper($this->input, $output, $this->clientServiceProphecy->reveal(), $localMachineHelper);
     $this->logStreamManagerProphecy = $this->prophet->prophesize(LogstreamManager::class);
     $this->sshHelper = new SshHelper($output, $this->localMachineHelper);
 
